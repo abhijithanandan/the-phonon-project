@@ -1,0 +1,45 @@
+LAMMPS (17 Nov 2016)
+units		real
+atom_style	full
+
+#----------------------------------------------------
+#INPUT FILE
+#----------------------------------------------------
+
+read_data	inputFiles/graphene.lmpsys
+  orthogonal box = (-2 -2 -3) to (23.272 24.1062 3)
+  2 by 4 by 1 MPI processor grid
+  reading atoms ...
+  180 atoms
+  0 = max # of 1-2 neighbors
+  0 = max # of 1-3 neighbors
+  0 = max # of 1-4 neighbors
+  1 = max # of special neighbors
+
+#----------------------------------------------------
+#POTENTIAL
+#----------------------------------------------------
+
+pair_style 	rebo
+pair_coeff 	* * inputFiles/CH.airebo.real C
+
+#----------------------------------------------------
+#INITIALIZATION
+#----------------------------------------------------
+
+velocity       all create 300 1234567 mom yes rot yes
+
+#----------------------------------------------------
+#FORCE
+#----------------------------------------------------
+
+variable	Fx equal fcm(all,x)
+variable	Fy equal fcm(all,y)
+
+#----------------------------------------------------
+#LOG
+#----------------------------------------------------
+
+thermo_style    custom step temp pe ke etotal v_Fx v_Fy
+thermo          1000
+log             outputFiles/thermo.log
