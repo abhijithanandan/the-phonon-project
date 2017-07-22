@@ -1,13 +1,13 @@
 LAMMPS (17 Nov 2016)
 units		real
 atom_style	full
-
+boundary	p p f
 #----------------------------------------------------
 #INPUT FILE
 #----------------------------------------------------
 
 read_data	inputFiles/graphene.lmpsys
-  orthogonal box = (-2 -2 -3) to (23.272 24.1062 3)
+  orthogonal box = (0 0 -3) to (21.272 22.1062 3)
   2 by 4 by 1 MPI processor grid
   reading atoms ...
   180 atoms
