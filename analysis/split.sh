@@ -4,7 +4,7 @@ mv tmp.dat vel.dat
 
 sort -n -k1 vel.dat > velSorted.dat
 
-awk 'NR%10000==0{print $1}' velSorted.dat > ids.dat
+awk 'NR%10001==0{print $1}' velSorted.dat > ids.dat
 
 i=1
 num=1
