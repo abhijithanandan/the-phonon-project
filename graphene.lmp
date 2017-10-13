@@ -1,6 +1,8 @@
 units		real
 atom_style	full
 boundary	p p p
+newton		on 
+
 #----------------------------------------------------
 #INPUT FILE
 #----------------------------------------------------
@@ -8,17 +10,30 @@ boundary	p p p
 read_data	inputFiles/graphene.lmpsys
 
 #----------------------------------------------------
+#GROUP
+#----------------------------------------------------
+
+group		g1 id 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15
+
+#----------------------------------------------------
 #POTENTIAL
 #----------------------------------------------------
 
-pair_style 	tersoff	
-pair_coeff 	* * inputFiles/SiC.tersoff C 
+pair_style 	rebo 	
+pair_coeff 	* * inputFiles/CH.airebo.real C 
 
 #----------------------------------------------------
 #INITIALIZATION
 #----------------------------------------------------
 
 velocity       all create 300 1234567 mom yes rot yes 
+
+#----------------------------------------------------
+#NEIGHBOUR LIST
+#----------------------------------------------------
+
+neighbor	2.5 bin
+neigh_modify	every 1 delay 0 check yes
 
 #----------------------------------------------------
 #FORCE
@@ -32,8 +47,14 @@ variable	Fy equal fcm(all,y)
 #----------------------------------------------------
 
 thermo_style    custom step temp pe ke etotal v_Fx v_Fy
-thermo          1000  
+thermo          100  
 log             outputFiles/thermo.log
+
+#----------------------------------------------------
+#COMPUTE
+#----------------------------------------------------
+
+compute		c1 all temp
 
 #----------------------------------------------------
 #TIMESTEP
@@ -47,9 +68,14 @@ timestep	1
 
 fix		fxnpt all npt temp 300 300 100 iso 1.0 1.0 1000.0 
 
-run		1000000
+dump            dmpall all dcd 1000 outputFiles/graphene1.dcd   
+
+run		100000
+
+undump		dmpall
 
 unfix		fxnpt
+
 
 #----------------------------------------------------
 #NVT RUN
@@ -62,14 +88,18 @@ fix 		fxmom all momentum 1 linear 1 1 1 angular
 #EQUILIBRATION RUN
 #----------------------------------------------------
 
-run 		1000000
+dump            dmpall all dcd 1000 outputFiles/graphene2.dcd   
+
+run 		100000
+
+undump		dmpall
 
 #----------------------------------------------------
 #TEST RUN 
 #----------------------------------------------------
 
-unfix		fxnvt
-fix		fxnve all nve 
+#unfix		fxnvt
+#fix		fxnve all nve 
 
 #run 		500000
 
@@ -80,15 +110,16 @@ fix		fxnve all nve
 #DUMP FILES
 #----------------------------------------------------
 
-dump            dmpvel1000 all custom 1000 outputFiles/vel1000.dat id vx vy vz
-dump            dmpvel10000 all custom 10000 outputFiles/vel10000.dat id vx vy vz
-dump            dmpall all dcd 10000 outputFiles/graphene.dcd   
+dump            dmpvel g1 custom 6 outputFiles/velocity.dat id vx vy vz
+dump_modify	dmpvel sort id
+
+dump            dmpall all dcd 1000 outputFiles/graphene3.dcd   
 
 #----------------------------------------------------
 #PRODUCTION RUN
 #----------------------------------------------------
 
-run 		10000000
+run 		1000000
 
 
 

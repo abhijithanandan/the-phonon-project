@@ -3,7 +3,7 @@ package require topotools
 
 set molname graphene
 
-graphene -lx 10 -ly 10 -type zigzag -b 0
+graphene -lx 5 -ly 5 -type zigzag -b 0
 set sel [atomselect top all]
 $sel moveby {0.7090 0.0 0.0}
 $sel writepdb $molname.pdb
